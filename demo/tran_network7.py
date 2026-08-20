@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 plt.ion()
 
 # read netlist
-net = ntl.Network('tran_network6.net')
+net = ntl.Network('tran_network7.net')
 
 # compute the circuit solution
 net_solve(net)

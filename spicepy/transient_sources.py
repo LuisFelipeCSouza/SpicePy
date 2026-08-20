@@ -77,24 +77,24 @@ def pulse(V1, V2, Td=0, Tr=None, Tf=None, Pw=None, Period=None, t=None):
         t = np.array([t])
 
         # check presence of Tr, and Tf (raise error)
-        if (Tr == None) or (Tf == None):
+        if (Tr is None) or (Tf is None):
             raise TypeError('Missing Tr and/or Tf')
     else:
 
         # check presence of Tr, and Tf (assign default)
         time_step = t[1] - t[0]
-        if Tr == None:
+        if Tr is None:
             Tr = np.copy(time_step)
-        if Tf == None:
+        if Tf is None:
             Tf = np.copy(time_step)
 
     # check presence of Pw and Period fot t > Td
     if t[-1] > Td:
 
-        if Pw == None:
+        if Pw is None:
             Pw = t[-1] - Td
 
-        if Period == None:
+        if Period is None:
             Period = t[-1] - Td
 
     # get number of finite periods
@@ -144,7 +144,8 @@ def sin(Vo, Va, Freq=None, Td=0, Df=0, Phase=0, t=None):
 
     The waveforms is:
         * t < Td ==> Vo + Va * np.sin(Phase * (np.pi / 180))
-        * t > Td ==> Vo + Va * np.sin(2 * np.pi * Freq * (t - Td) + Phase * (np.pi / 180)) * np.exp(-(t - Td) * Df)
+        * t > Td ==> Vo + Va * np.sin(2*pi*Freq*(t-Td) + Phase*(pi/180))
+                     * np.exp(-(t - Td) * Df)
 
     :param Vo: offset
     :param Va: amplitude (peak) of the waveform
@@ -170,7 +171,12 @@ def sin(Vo, Va, Freq=None, Td=0, Df=0, Phase=0, t=None):
 
     out = np.zeros_like(t)
     out[t <= Td] = Vo + Va * np.sin(Phase * (np.pi / 180))
-    out[t > Td] = Vo + Va * np.sin(2 * np.pi * Freq * (t[t > Td] - Td) + Phase * (np.pi / 180)) * np.exp(-(t[t > Td] - Td) * Df)
+    t_gt = t[t > Td]
+    phase_rad = Phase * (np.pi / 180)
+    out[t > Td] = (
+        Vo + Va * np.sin(2 * np.pi * Freq * (t_gt - Td) + phase_rad)
+        * np.exp(-(t_gt - Td) * Df)
+    )
 
     # if input is scalar convert out to scalar too
     if out.size == 1:

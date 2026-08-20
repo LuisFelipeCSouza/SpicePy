@@ -11,8 +11,9 @@
 # ==================
 # imported modules
 # ==================
-from scipy.sparse.linalg import spsolve
 import numpy as np
+from scipy.sparse.linalg import spsolve
+
 import spicepy.transient_sources as tsr
 
 
@@ -136,16 +137,20 @@ def transient_solve(net):
     NV = len(net.isort[3])
     NE = len(net.isort[5])
     NH = len(net.isort[8])
-    net.x[:, 0] = np.concatenate((net_op.x[:net_op.node_num],
-                                  np.array(net_op.values)[sorted(net.isort[1])],
-                                  net_op.x[net_op.node_num:(net_op.node_num + NV)],
-                                  net_op.x[(net_op.node_num + NV):(net_op.node_num + NV + NE)],
-                                  net_op.x[(net_op.node_num + NV + NE):(net_op.node_num + NV + NE + NH)]))
+    net.x[:, 0] = np.concatenate((
+        net_op.x[:net_op.node_num],
+        np.array(net_op.values)[sorted(net.isort[1])],
+        net_op.x[net_op.node_num:(net_op.node_num + NV)],
+        net_op.x[(net_op.node_num + NV):(net_op.node_num + NV + NE)],
+        net_op.x[(net_op.node_num + NV + NE):(net_op.node_num + NV + NE + NH)],
+    ))
 
-    # Solution (Integration using trepezoidal rule. Ref: Vlach, eq 9.4.6, pag. 277)
+    # Solution (trapezoidal rule, ref: Vlach eq 9.4.6 pag. 277)
     K = net.C + 0.5 * h * net.G
     for k in range(1, net.t.size):
-        rhs = (net.C - 0.5 * h * net.G) * net.x[:, k - 1] + 0.5 * h * (rhs_fun(net.t[k - 1]) + rhs_fun(net.t[k]))
+        prev = rhs_fun(net.t[k - 1])
+        curr = rhs_fun(net.t[k])
+        rhs = (net.C - 0.5 * h * net.G) * net.x[:, k - 1] + 0.5 * h * (prev + curr)
         net.x[:, k] = spsolve(K, rhs)
 
 

@@ -5,3 +5,7 @@
 .directory
 /dist
 /spicepy.egg-info
+.venv/
+*.pyc
+teste/
+site/

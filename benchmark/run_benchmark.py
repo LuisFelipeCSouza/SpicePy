@@ -65,7 +65,7 @@ ref = 10 ** (ref[:,1]/20) * np.exp(ref[:,2] * 1j * np.pi / 180)
 vr1 = net.get_voltage('R1')
 rms_r = np.sqrt(np.sum((ref.real - vr1.real) ** 2))
 rms_i = np.sqrt(np.sum((ref.imag - vr1.imag) ** 2))
-rms = np.sqrt(rms_r1 ** 2 + rms_i1 ** 2) / ref.shape[0]
+rms = np.sqrt(rms_r ** 2 + rms_i ** 2) / ref.shape[0]
 check(rms, 1e-5)
 
 # tran network1
@@ -126,7 +126,7 @@ ref = np.interp(net.t, ref[:,0],ref[:,1])
 rms = np.sqrt(np.sum((ref - val) ** 2)) / ref.size / np.abs(ref).max()
 check(rms, 1e-5)
 
-# tran network7
+# tran network6
 print(' * Testing TRAN network6 ...', end=' ',flush=True)
 net = ntl.Network('../demo/tran_network6.net')
 net_solve(net)
@@ -136,7 +136,7 @@ ref = np.interp(net.t, ref[:,0],ref[:,1])
 rms = np.sqrt(np.sum((ref - val) ** 2)) / ref.size / np.abs(ref).max()
 check(rms, 1e-5)
 
-# tran network6
+# tran network7
 print(' * Testing TRAN network7 ...', end=' ',flush=True)
 net = ntl.Network('../demo/tran_network7.net')
 net_solve(net)
